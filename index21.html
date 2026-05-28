@@ -1,0 +1,1593 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap');
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --ink:#1a1a2e;--ink2:#4a4a6a;--ink3:#8888aa;
+    --surface:#ffffff;--surface2:#f7f7fc;--surface3:#eeeef8;
+    --accent:#4f46e5;--accent2:#7c3aed;--accent-light:#ede9fe;
+    --success:#059669;--success-light:#d1fae5;
+    --danger:#dc2626;--danger-light:#fee2e2;
+    --warn:#d97706;--warn-light:#fef3c7;
+    --border:#e2e2f0;--border2:#c8c8e0;
+    --radius:10px;--radius2:16px;
+    --font:'DM Sans',sans-serif;--font-display:'Playfair Display',serif;
+    --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 12px rgba(79,70,229,0.06);
+  }
+  body{font-family:var(--font);color:var(--ink);background:transparent}
+  
+  #app{min-height:600px;padding:0 0 2rem}
+  
+  /* HEADER */
+  .app-header{background:linear-gradient(135deg,#1a1a2e 0%,#2d2b6b 60%,#4f46e5 100%);padding:1.5rem 2rem 1rem;border-radius:var(--radius2) var(--radius2) 0 0;position:relative;overflow:hidden}
+  .app-header::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.04)}
+  .app-header::after{content:'';position:absolute;bottom:-60px;left:20%;width:300px;height:150px;border-radius:50%;background:rgba(124,58,237,0.15)}
+  .header-top{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
+  .bank-logo{display:flex;align-items:center;gap:10px}
+  .bank-logo .logo-icon{width:36px;height:36px;background:rgba(255,255,255,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;border:1px solid rgba(255,255,255,0.2)}
+  .bank-logo span{font-family:var(--font-display);font-size:18px;color:#fff;letter-spacing:-0.3px}
+  .save-indicator{font-size:12px;color:rgba(255,255,255,0.6);display:flex;align-items:center;gap:6px}
+  .save-dot{width:7px;height:7px;border-radius:50%;background:#34d399;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+  .header-title{margin-top:1rem;position:relative;z-index:1}
+  .header-title h1{font-family:var(--font-display);font-size:22px;color:#fff;font-weight:600;margin-bottom:4px}
+  .header-title p{font-size:13px;color:rgba(255,255,255,0.65)}
+
+  /* PROGRESS STEPPER */
+  .stepper{background:var(--surface);border-bottom:1px solid var(--border);padding:1rem 2rem;overflow-x:auto}
+  .stepper-inner{display:flex;align-items:center;gap:0;min-width:700px}
+  .step-item{display:flex;align-items:center;flex:1}
+  .step-btn{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;background:none;border:none;padding:0 4px;opacity:0.5;transition:opacity 0.2s}
+  .step-btn.active,.step-btn.done{opacity:1}
+  .step-btn.active .step-num{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .step-btn.done .step-num{background:var(--success);color:#fff;border-color:var(--success)}
+  .step-num{width:28px;height:28px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--ink3);transition:all 0.3s;background:var(--surface)}
+  .step-label{font-size:10px;color:var(--ink3);white-space:nowrap;font-weight:500}
+  .step-btn.active .step-label,.step-btn.done .step-label{color:var(--ink)}
+  .step-connector{flex:1;height:2px;background:var(--border);margin:0 2px;margin-bottom:14px}
+  .step-connector.done{background:var(--success)}
+
+  /* FORM BODY */
+  .form-body{background:var(--surface2);padding:1.5rem 2rem;min-height:480px}
+  .step-panel{display:none;animation:fadeIn 0.3s ease}
+  .step-panel.active{display:block}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+  .panel-title{font-family:var(--font-display);font-size:20px;color:var(--ink);margin-bottom:4px}
+  .panel-subtitle{font-size:13px;color:var(--ink3);margin-bottom:1.5rem}
+
+  .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem}
+  .form-group{display:flex;flex-direction:column;gap:5px}
+  .form-group.full{grid-column:1/-1}
+  label{font-size:12px;font-weight:600;color:var(--ink2);letter-spacing:0.3px;text-transform:uppercase}
+  .required::after{content:' *';color:var(--danger)}
+  input,select,textarea{font-family:var(--font);font-size:14px;color:var(--ink);background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:9px 12px;width:100%;transition:border-color 0.2s,box-shadow 0.2s;outline:none}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,70,229,0.1)}
+  input.valid{border-color:var(--success)}
+  input.invalid,select.invalid{border-color:var(--danger)}
+  .field-error{font-size:11px;color:var(--danger);display:flex;align-items:center;gap:4px}
+  .field-hint{font-size:11px;color:var(--ink3)}
+  .field-success{font-size:11px;color:var(--success)}
+
+  .verify-row{display:flex;gap:8px;align-items:flex-start}
+  .verify-row input{flex:1}
+  .btn-verify{padding:9px 14px;background:var(--accent-light);color:var(--accent);border:1.5px solid var(--accent);border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all 0.2s;font-family:var(--font)}
+  .btn-verify:hover{background:var(--accent);color:#fff}
+  .btn-verify.verified{background:var(--success-light);color:var(--success);border-color:var(--success);cursor:default}
+
+  /* LOAN TYPE CARDS */
+  .loan-type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem}
+  .loan-card{border:2px solid var(--border);border-radius:var(--radius2);padding:1.25rem;cursor:pointer;transition:all 0.25s;background:var(--surface);position:relative;overflow:hidden}
+  .loan-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--border)}
+  .loan-card.personal::before{background:linear-gradient(90deg,#4f46e5,#7c3aed)}
+  .loan-card.home::before{background:linear-gradient(90deg,#0891b2,#0e7490)}
+  .loan-card.business::before{background:linear-gradient(90deg,#d97706,#b45309)}
+  .loan-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow)}
+  .loan-card.selected{border-color:var(--accent);background:var(--accent-light)}
+  .loan-card-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:10px}
+  .personal .loan-card-icon{background:#ede9fe}
+  .home .loan-card-icon{background:#e0f2fe}
+  .business .loan-card-icon{background:#fef3c7}
+  .loan-card h3{font-size:15px;font-weight:600;margin-bottom:4px;color:var(--ink)}
+  .loan-card p{font-size:12px;color:var(--ink3);line-height:1.4}
+  .loan-card .loan-range{font-size:13px;font-weight:600;color:var(--accent);margin-top:8px}
+
+  /* RANGE SLIDER */
+  .range-wrap{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem}
+  .range-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+  .range-val{font-size:22px;font-weight:600;color:var(--accent)}
+  .range-sub{font-size:12px;color:var(--ink3)}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;background:linear-gradient(to right,var(--accent) 0%,var(--border) 0%);outline:none;padding:0;border:none;box-shadow:none;cursor:pointer}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);border:3px solid #fff;box-shadow:0 2px 6px rgba(79,70,229,0.4);cursor:pointer}
+  .range-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--ink3);margin-top:6px}
+
+  /* EMI DISPLAY */
+  .emi-card{background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:var(--radius2);padding:1.25rem;color:#fff;margin-top:1rem}
+  .emi-card h4{font-size:12px;opacity:0.8;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+  .emi-amount{font-size:28px;font-weight:600;font-family:var(--font-display)}
+  .emi-details{display:flex;gap:1.5rem;margin-top:10px;flex-wrap:wrap}
+  .emi-detail{font-size:12px;opacity:0.8}
+  .emi-detail span{display:block;font-size:14px;font-weight:600;opacity:1;margin-top:2px}
+
+  /* DOCUMENT UPLOAD */
+  .doc-upload-zone{border:2px dashed var(--border2);border-radius:var(--radius2);padding:2rem;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--surface)}
+  .doc-upload-zone:hover,.doc-upload-zone.drag{border-color:var(--accent);background:var(--accent-light)}
+  .doc-upload-zone .upload-icon{font-size:36px;margin-bottom:8px}
+  .doc-upload-zone h4{font-size:14px;font-weight:600;color:var(--ink)}
+  .doc-upload-zone p{font-size:12px;color:var(--ink3);margin-top:4px}
+  .doc-list{display:flex;flex-direction:column;gap:8px;margin-top:1rem}
+  .doc-item{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:10px 12px;display:flex;align-items:center;gap:10px}
+  .doc-item-icon{width:32px;height:32px;border-radius:8px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+  .doc-item-info{flex:1;min-width:0}
+  .doc-item-name{font-size:13px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .doc-item-meta{font-size:11px;color:var(--ink3)}
+  .doc-item-status{font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px}
+  .doc-item-status.ok{background:var(--success-light);color:var(--success)}
+  .doc-item-status.compress{background:var(--warn-light);color:var(--warn)}
+  .doc-item-status.error{background:var(--danger-light);color:var(--danger)}
+  .doc-remove{background:none;border:none;cursor:pointer;color:var(--ink3);font-size:16px;padding:2px;line-height:1}
+  .doc-preview{width:48px;height:48px;border-radius:6px;object-fit:cover;border:1px solid var(--border)}
+  .doc-req-list{display:flex;flex-direction:column;gap:6px;margin-bottom:1rem}
+  .doc-req-item{display:flex;align-items:center;gap:8px;font-size:13px}
+  .doc-req-item .check{width:18px;height:18px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--ink3);flex-shrink:0}
+  .doc-req-item.uploaded .check{background:var(--success);border-color:var(--success);color:#fff}
+
+  /* E-SIGNATURE */
+  .sig-wrap{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius2);overflow:hidden}
+  .sig-toolbar{background:var(--surface2);border-bottom:1px solid var(--border);padding:8px 12px;display:flex;align-items:center;gap:8px}
+  .sig-toolbar span{font-size:12px;color:var(--ink3)}
+  canvas#sigCanvas{display:block;width:100%;height:180px;cursor:crosshair;touch-action:none}
+  .sig-actions{padding:8px 12px;display:flex;gap:8px;border-top:1px solid var(--border)}
+  .btn-sm{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border2);background:var(--surface);color:var(--ink2);transition:all 0.2s;font-family:var(--font)}
+  .btn-sm:hover{background:var(--surface3)}
+  .btn-sm.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .btn-sm.primary:hover{background:#4338ca}
+  .btn-sm.danger{border-color:var(--danger);color:var(--danger)}
+  .btn-sm.danger:hover{background:var(--danger-light)}
+  .sig-consent{display:flex;align-items:flex-start;gap:8px;margin-top:1rem;font-size:12px;color:var(--ink2);line-height:1.5}
+  .sig-consent input[type=checkbox]{width:16px;height:16px;flex-shrink:0;margin-top:2px;accent-color:var(--accent)}
+
+  /* SUMMARY */
+  .summary-section{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius2);padding:1.25rem;margin-bottom:1rem}
+  .summary-section h3{font-size:13px;font-weight:700;color:var(--ink2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .summary-row{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid var(--border)}
+  .summary-row:last-child{border-bottom:none}
+  .summary-row .lbl{font-size:13px;color:var(--ink3)}
+  .summary-row .val{font-size:13px;font-weight:600;color:var(--ink)}
+  .approval-badge{background:linear-gradient(135deg,#059669,#10b981);color:#fff;border-radius:var(--radius2);padding:1.25rem;text-align:center;margin-bottom:1rem}
+  .approval-badge h2{font-family:var(--font-display);font-size:20px;margin-bottom:4px}
+  .approval-badge p{font-size:13px;opacity:0.9}
+  .score-bar{background:rgba(255,255,255,0.2);border-radius:10px;height:8px;margin-top:10px;overflow:hidden}
+  .score-fill{background:#fff;border-radius:10px;height:100%;transition:width 1s ease}
+
+  /* NAVIGATION */
+  .form-nav{background:var(--surface);border-top:1px solid var(--border);padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;border-radius:0 0 var(--radius2) var(--radius2)}
+  .btn-nav{padding:10px 22px;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all 0.2s;font-family:var(--font);display:flex;align-items:center;gap:6px}
+  .btn-back{background:var(--surface2);color:var(--ink2);border:1.5px solid var(--border)}
+  .btn-back:hover{background:var(--surface3)}
+  .btn-next{background:var(--accent);color:#fff}
+  .btn-next:hover{background:#4338ca}
+  .btn-next:disabled{background:var(--ink3);cursor:not-allowed}
+  .btn-submit{background:linear-gradient(135deg,#059669,#047857);color:#fff}
+  .btn-submit:hover{filter:brightness(1.05)}
+  .nav-info{font-size:12px;color:var(--ink3)}
+
+  /* ADDRESS AUTOCOMPLETE */
+  .autocomplete-wrap{position:relative}
+  .autocomplete-list{position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1.5px solid var(--accent);border-radius:0 0 var(--radius) var(--radius);z-index:100;max-height:180px;overflow-y:auto;box-shadow:0 8px 16px rgba(0,0,0,0.1)}
+  .autocomplete-item{padding:8px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:flex-start}
+  .autocomplete-item:hover{background:var(--accent-light)}
+  .autocomplete-item:last-child{border-bottom:none}
+  .ac-pin{color:var(--accent);font-size:14px;flex-shrink:0;margin-top:1px}
+  .ac-text strong{display:block;color:var(--ink);font-size:13px}
+  .ac-text span{color:var(--ink3);font-size:11px}
+
+  /* TAGS / BADGES */
+  .badge{font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;display:inline-block}
+  .badge.info{background:var(--accent-light);color:var(--accent)}
+  .badge.success{background:var(--success-light);color:var(--success)}
+  .badge.warn{background:var(--warn-light);color:var(--warn)}
+
+  /* MISC */
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
+  .mt-1{margin-top:8px}.mt-2{margin-top:16px}.mt-3{margin-top:24px}
+  .text-sm{font-size:13px;color:var(--ink2)}
+  .divider{border:none;border-top:1px solid var(--border);margin:1rem 0}
+  .info-box{background:var(--accent-light);border:1px solid rgba(79,70,229,0.2);border-radius:var(--radius);padding:10px 12px;font-size:12px;color:var(--accent);margin-bottom:1rem;display:flex;gap:8px;align-items:flex-start}
+  .warn-box{background:var(--warn-light);border:1px solid rgba(217,119,6,0.2);border-radius:var(--radius);padding:10px 12px;font-size:12px;color:var(--warn);margin-bottom:1rem;display:flex;gap:8px}
+
+  .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .otp-row{display:flex;gap:8px}
+  .otp-row input{text-align:center;letter-spacing:4px;font-size:18px;font-weight:600;max-width:120px}
+
+  .references-list{display:flex;flex-direction:column;gap:8px}
+  .ref-item{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:10px 12px}
+  .ref-item-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .ref-num{font-size:11px;color:var(--ink3);font-weight:600;text-transform:uppercase}
+  .remove-ref{background:none;border:none;cursor:pointer;font-size:14px;color:var(--ink3)}
+
+  /* TEST PANEL */
+  .test-panel{margin-top:1rem;background:#1e1e2e;border-radius:var(--radius2);overflow:hidden;font-family:monospace}
+  .test-header{background:#2d2d44;padding:8px 14px;display:flex;justify-content:space-between;align-items:center}
+  .test-header span{color:#a0a0c0;font-size:12px;letter-spacing:0.5px}
+  .test-body{padding:12px 14px;max-height:200px;overflow-y:auto}
+  .test-line{font-size:12px;padding:2px 0;display:flex;gap:8px;align-items:center}
+  .test-pass{color:#34d399}
+  .test-fail{color:#f87171}
+  .test-pending{color:#fbbf24}
+  .test-run-btn{padding:4px 10px;background:#4f46e5;color:#fff;border:none;border-radius:6px;font-size:11px;cursor:pointer;font-family:monospace}
+
+  /* CHECKBOX STYLED */
+  .checkbox-group{display:flex;flex-direction:column;gap:8px}
+  .check-option{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1.5px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all 0.15s;background:var(--surface)}
+  .check-option:hover{border-color:var(--accent)}
+  .check-option input{accent-color:var(--accent);width:16px;height:16px}
+  .check-option label{cursor:pointer;font-size:13px;color:var(--ink);font-weight:400;text-transform:none;letter-spacing:0}
+
+  .radio-group{display:flex;gap:8px;flex-wrap:wrap}
+  .radio-option{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1.5px solid var(--border);border-radius:20px;cursor:pointer;transition:all 0.15s;background:var(--surface);font-size:13px;color:var(--ink2)}
+  .radio-option:hover{border-color:var(--accent);color:var(--accent)}
+  .radio-option.selected{border-color:var(--accent);background:var(--accent-light);color:var(--accent);font-weight:600}
+
+  .tab-bar{display:flex;gap:4px;background:var(--surface3);padding:4px;border-radius:var(--radius);margin-bottom:1rem}
+  .tab-btn{flex:1;padding:7px;font-size:12px;font-weight:600;border:none;border-radius:7px;cursor:pointer;background:none;color:var(--ink3);transition:all 0.2s;font-family:var(--font)}
+  .tab-btn.active{background:var(--surface);color:var(--accent);box-shadow:0 1px 3px rgba(0,0,0,0.1)}
+  .tab-content{display:none}
+  .tab-content.active{display:block}
+</style>
+
+<div id="app">
+  <div class="app-header">
+    <div class="header-top">
+      <div class="bank-logo">
+        <div class="logo-icon">🏦</div>
+        <span>NexaFinance</span>
+      </div>
+      <div class="save-indicator"><div class="save-dot"></div><span id="saveStatus">Auto-saved</span></div>
+    </div>
+    <div class="header-title">
+      <h1>Loan Application Portal</h1>
+      <p>Complete your application in 8 simple steps — Application ID: <strong style="color:#a5b4fc" id="appId">NF-2026-XXXXXX</strong></p>
+    </div>
+  </div>
+
+  <div class="stepper">
+    <div class="stepper-inner" id="stepperInner"></div>
+  </div>
+
+  <div class="form-body" id="formBody"></div>
+
+  <div class="form-nav">
+    <button class="btn-nav btn-back" id="btnBack" onclick="prevStep()">← Back</button>
+    <div class="nav-info" id="navInfo">Step 1 of 8</div>
+    <button class="btn-nav btn-next" id="btnNext" onclick="nextStep()">Continue →</button>
+  </div>
+</div>
+
+<script>
+const STEPS=[
+  {id:'loan-type',label:'Loan Type',icon:'💼'},
+  {id:'personal-info',label:'Personal',icon:'👤'},
+  {id:'kyc',label:'KYC',icon:'🔐'},
+  {id:'financials',label:'Financials',icon:'📊'},
+  {id:'documents',label:'Documents',icon:'📁'},
+  {id:'references',label:'References',icon:'🤝'},
+  {id:'signature',label:'Sign',icon:'✍️'},
+  {id:'summary',label:'Summary',icon:'✅'}
+];
+
+let state={
+  currentStep:0,
+  loanType:null,
+  loanAmount:500000,
+  loanTenure:36,
+  personalInfo:{},
+  address:{},
+  kyc:{panVerified:false,aadhaarVerified:false,otpSent:false},
+  financials:{},
+  documents:[],
+  docRequirements:{},
+  references:[{name:'',phone:'',relation:'',email:''}],
+  signature:null,
+  sigConsent:false,
+  appId:'NF-2026-'+Math.random().toString(36).substr(2,6).toUpperCase(),
+  testResults:[],
+  savedAt:new Date()
+};
+
+document.getElementById('appId').textContent=state.appId;
+
+const INTEREST_RATES={personal:0.149,home:0.085,business:0.129};
+const LOAN_RANGES={personal:{min:50000,max:2500000},home:{min:1000000,max:50000000},business:{min:500000,max:20000000}};
+
+const DOC_REQUIREMENTS={
+  personal:['PAN Card','Aadhaar Card','Last 3 Salary Slips','Bank Statement (6 months)','Form 16'],
+  home:['PAN Card','Aadhaar Card','Income Tax Returns (2 years)','Bank Statement (12 months)','Property Documents','Sale Agreement'],
+  business:['PAN Card','Aadhaar Card','GST Registration','Business ITR (3 years)','Bank Statement (12 months)','Balance Sheet','Profit & Loss Statement']
+};
+
+const ADDRESS_SUGGESTIONS=[
+  {line:'12, MG Road, Koramangala','city':'Bengaluru, Karnataka 560034'},
+  {line:'456, Bandra West, Turner Road','city':'Mumbai, Maharashtra 400050'},
+  {line:'789, Connaught Place','city':'New Delhi, Delhi 110001'},
+  {line:'23, Anna Salai, Nungambakkam','city':'Chennai, Tamil Nadu 600034'},
+  {line:'Plot 45, Sector 18, Gurgaon','city':'Haryana 122015'},
+  {line:'88, Salt Lake, Sector V','city':'Kolkata, West Bengal 700091'},
+  {line:'67, FC Road, Shivajinagar','city':'Pune, Maharashtra 411005'},
+];
+
+// Auto-save every 5s
+setInterval(()=>{
+  state.savedAt=new Date();
+  document.getElementById('saveStatus').textContent='Saved '+state.savedAt.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+},5000);
+
+function formatINR(n){return '₹'+Number(n).toLocaleString('en-IN')}
+function calcEMI(p,r,n){const mr=r/12;return Math.round(p*mr*Math.pow(1+mr,n)/(Math.pow(1+mr,n)-1))}
+
+function buildStepper(){
+  const el=document.getElementById('stepperInner');
+  el.innerHTML='';
+  STEPS.forEach((s,i)=>{
+    const done=i<state.currentStep,active=i===state.currentStep;
+    el.innerHTML+=`<div class="step-item">
+      <button class="step-btn ${done?'done':''} ${active?'active':''}" onclick="goToStep(${i})" title="${s.label}">
+        <div class="step-num">${done?'✓':i+1}</div>
+        <div class="step-label">${s.label}</div>
+      </button>
+      ${i<STEPS.length-1?`<div class="step-connector ${done?'done':''}"></div>`:''}
+    </div>`;
+  });
+  document.getElementById('navInfo').textContent=`Step ${state.currentStep+1} of ${STEPS.length}`;
+  document.getElementById('btnBack').style.visibility=state.currentStep===0?'hidden':'visible';
+  const btnNext=document.getElementById('btnNext');
+  if(state.currentStep===STEPS.length-1){
+    btnNext.textContent='Submit Application';btnNext.className='btn-nav btn-submit';
+  }else{
+    btnNext.textContent='Continue →';btnNext.className='btn-nav btn-next';
+  }
+}
+
+function renderStep(){
+  const body=document.getElementById('formBody');
+  const renders={
+    'loan-type':renderLoanType,
+    'personal-info':renderPersonal,
+    'kyc':renderKYC,
+    'financials':renderFinancials,
+    'documents':renderDocuments,
+    'references':renderReferences,
+    'signature':renderSignature,
+    'summary':renderSummary
+  };
+  const fn=renders[STEPS[state.currentStep].id];
+  body.innerHTML='<div class="step-panel active">'+fn()+'</div>';
+  afterRender();
+}
+
+function afterRender(){
+  const id=STEPS[state.currentStep].id;
+  if(id==='loan-type')initLoanType();
+  if(id==='personal-info')initPersonal();
+  if(id==='kyc')initKYC();
+  if(id==='financials')initFinancials();
+  if(id==='documents')initDocuments();
+  if(id==='references')initReferences();
+  if(id==='signature')initSignature();
+  if(id==='summary')initSummary();
+}
+
+// STEP 1: LOAN TYPE
+function renderLoanType(){
+  return `<div class="panel-title">Choose Your Loan Type</div>
+  <div class="panel-subtitle">Select the loan that best fits your needs</div>
+  <div class="loan-type-grid">
+    <div class="loan-card personal ${state.loanType==='personal'?'selected':''}" id="lc-personal" onclick="selectLoan('personal')">
+      <div class="loan-card-icon">👤</div>
+      <h3>Personal Loan</h3>
+      <p>For travel, medical, wedding, or any personal need — no collateral required</p>
+      <div class="loan-range">₹50K – ₹25L</div>
+    </div>
+    <div class="loan-card home ${state.loanType==='home'?'selected':''}" id="lc-home" onclick="selectLoan('home')">
+      <div class="loan-card-icon">🏠</div>
+      <h3>Home Loan</h3>
+      <p>Purchase, construct, or renovate your dream home with competitive rates</p>
+      <div class="loan-range">₹10L – ₹5Cr</div>
+    </div>
+    <div class="loan-card business ${state.loanType==='business'?'selected':''}" id="lc-business" onclick="selectLoan('business')">
+      <div class="loan-card-icon">🏢</div>
+      <h3>Business Loan</h3>
+      <p>Fund working capital, expansion, equipment, or business growth</p>
+      <div class="loan-range">₹5L – ₹2Cr</div>
+    </div>
+  </div>
+  <div id="loanConfig" style="display:${state.loanType?'block':'none'}">
+    <div class="form-grid">
+      <div class="form-group full">
+        <label>Loan Amount</label>
+        <div class="range-wrap">
+          <div class="range-top">
+            <div><div class="range-val" id="loanAmtDisplay">${formatINR(state.loanAmount)}</div></div>
+            <span class="range-sub" id="loanRange"></span>
+          </div>
+          <input type="range" id="loanAmtSlider" step="10000">
+          <div class="range-labels" id="rangeLabels"></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Loan Purpose</label>
+        <select id="loanPurpose">
+          <option value="">Select Purpose</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Loan Tenure</label>
+        <div class="range-wrap">
+          <div class="range-top">
+            <div><div class="range-val" id="tenureDisplay">${state.loanTenure} months</div></div>
+          </div>
+          <input type="range" id="tenureSlider" min="12" max="360" step="12" value="${state.loanTenure}">
+          <div class="range-labels" id="tenureLabels"></div>
+        </div>
+      </div>
+    </div>
+    <div id="emiCard"></div>
+  </div>`;
+}
+
+function initLoanType(){
+  if(!state.loanType)return;
+  const lt=state.loanType,r=LOAN_RANGES[lt];
+  const slider=document.getElementById('loanAmtSlider');
+  slider.min=r.min;slider.max=r.max;slider.value=Math.min(Math.max(state.loanAmount,r.min),r.max);
+  document.getElementById('loanRange').textContent=`${formatINR(r.min)} – ${formatINR(r.max)}`;
+  document.getElementById('rangeLabels').innerHTML=`<span>${formatINR(r.min)}</span><span>${formatINR(r.max)}</span>`;
+  
+  const tenureSlider=document.getElementById('tenureSlider');
+  const maxTenure=lt==='home'?360:lt==='business'?120:60;
+  tenureSlider.max=maxTenure;
+  tenureSlider.value=Math.min(state.loanTenure,maxTenure);
+  document.getElementById('tenureLabels').innerHTML=`<span>12 mo</span><span>${maxTenure} mo</span>`;
+
+  const purposes={
+    personal:['Medical Emergency','Wedding','Travel','Home Renovation','Education','Debt Consolidation','Other'],
+    home:['Purchase','Construction','Renovation','Extension','Plot Purchase'],
+    business:['Working Capital','Equipment Purchase','Business Expansion','Trade Finance','Franchise','Startup Capital']
+  };
+  const sel=document.getElementById('loanPurpose');
+  sel.innerHTML='<option value="">Select Purpose</option>'+purposes[lt].map(p=>`<option value="${p}" ${state.loanPurpose===p?'selected':''}>${p}</option>`).join('');
+
+  updateEMI();
+  updateSliderGradient(slider);
+
+  slider.addEventListener('input',e=>{
+    state.loanAmount=parseInt(e.target.value);
+    document.getElementById('loanAmtDisplay').textContent=formatINR(state.loanAmount);
+    updateEMI();updateSliderGradient(slider);
+    autoSave();
+  });
+  tenureSlider.addEventListener('input',e=>{
+    state.loanTenure=parseInt(e.target.value);
+    document.getElementById('tenureDisplay').textContent=state.loanTenure+' months';
+    updateEMI();
+    autoSave();
+  });
+  sel.addEventListener('change',e=>{state.loanPurpose=e.target.value;autoSave();});
+}
+
+function updateSliderGradient(slider){
+  const pct=(slider.value-slider.min)/(slider.max-slider.min)*100;
+  slider.style.background=`linear-gradient(to right,var(--accent) ${pct}%,var(--border) ${pct}%)`;
+}
+
+function updateEMI(){
+  const rate=INTEREST_RATES[state.loanType]||0.12;
+  const emi=calcEMI(state.loanAmount,rate,state.loanTenure);
+  const totalPayable=emi*state.loanTenure;
+  const totalInterest=totalPayable-state.loanAmount;
+  document.getElementById('emiCard').innerHTML=`<div class="emi-card">
+    <h4>Monthly EMI Estimate</h4>
+    <div class="emi-amount">${formatINR(emi)}</div>
+    <div class="emi-details">
+      <div class="emi-detail">Principal<span>${formatINR(state.loanAmount)}</span></div>
+      <div class="emi-detail">Total Interest<span>${formatINR(Math.round(totalInterest))}</span></div>
+      <div class="emi-detail">Total Payable<span>${formatINR(Math.round(totalPayable))}</span></div>
+      <div class="emi-detail">Rate<span>${(rate*100).toFixed(1)}% p.a.</span></div>
+    </div>
+  </div>`;
+}
+
+function selectLoan(type){
+  state.loanType=type;
+  state.loanAmount=LOAN_RANGES[type].min*3;
+  document.querySelectorAll('.loan-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('lc-'+type).classList.add('selected');
+  document.getElementById('loanConfig').style.display='block';
+  initLoanType();
+  autoSave();
+}
+
+// STEP 2: PERSONAL INFO
+function renderPersonal(){
+  const p=state.personalInfo||{};
+  const empFields=p.employmentType==='salaried'?`
+    <div class="form-group"><label class="required">Employer Name</label>
+    <input id="employerName" value="${p.employerName||''}" placeholder="Company / Organisation name"></div>
+    <div class="form-group"><label class="required">Work Email</label>
+    <input id="workEmail" type="email" value="${p.workEmail||''}" placeholder="you@company.com"></div>
+    <div class="form-group"><label class="required">Designation</label>
+    <input id="designation" value="${p.designation||''}" placeholder="Job title"></div>
+    <div class="form-group"><label class="required">Work Experience</label>
+    <select id="workExp">
+      <option value="">Select</option>
+      ${['< 1 year','1-2 years','2-5 years','5-10 years','10+ years'].map(v=>`<option value="${v}" ${p.workExp===v?'selected':''}>${v}</option>`).join('')}
+    </select></div>
+  `:(p.employmentType==='self-employed'?`
+    <div class="form-group"><label class="required">Business Name</label>
+    <input id="businessName" value="${p.businessName||''}" placeholder="Your business name"></div>
+    <div class="form-group"><label class="required">Business Type</label>
+    <select id="businessType">
+      <option value="">Select</option>
+      ${['Proprietorship','Partnership','Pvt Ltd','LLP','HUF','Trust'].map(v=>`<option value="${v}" ${p.businessType===v?'selected':''}>${v}</option>`).join('')}
+    </select></div>
+    <div class="form-group"><label class="required">Years in Business</label>
+    <input id="yearsInBiz" type="number" value="${p.yearsInBiz||''}" placeholder="Number of years" min="0"></div>
+    <div class="form-group"><label>GST Number</label>
+    <input id="gstNum" value="${p.gstNum||''}" placeholder="22AAAAA0000A1Z5" maxlength="15"></div>
+  `:state.loanType==='business'?`
+    <div class="form-group"><label class="required">Business Name</label>
+    <input id="businessName" value="${p.businessName||''}" placeholder="Your business name"></div>
+  `:'');
+
+  return `<div class="panel-title">Personal Information</div>
+  <div class="panel-subtitle">Tell us about yourself — all information is encrypted and secure</div>
+  
+  <div class="form-grid">
+    <div class="form-group">
+      <label class="required">First Name</label>
+      <input id="firstName" value="${p.firstName||''}" placeholder="As on Aadhaar / PAN">
+      <div id="err-firstName" class="field-error" style="display:none">⚠ Required</div>
+    </div>
+    <div class="form-group">
+      <label class="required">Last Name</label>
+      <input id="lastName" value="${p.lastName||''}" placeholder="As on Aadhaar / PAN">
+    </div>
+    <div class="form-group">
+      <label class="required">Date of Birth</label>
+      <input type="date" id="dob" value="${p.dob||''}" max="${new Date(Date.now()-18*365.25*24*3600*1000).toISOString().split('T')[0]}">
+      <div id="err-dob" class="field-error" style="display:none">⚠ Must be 18+ years</div>
+    </div>
+    <div class="form-group">
+      <label class="required">Gender</label>
+      <select id="gender">
+        <option value="">Select</option>
+        ${['Male','Female','Other','Prefer not to say'].map(v=>`<option value="${v}" ${p.gender===v?'selected':''}>${v}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="required">Mobile Number</label>
+      <div class="verify-row">
+        <input id="mobileNum" value="${p.mobileNum||''}" placeholder="10-digit mobile" maxlength="10" pattern="[6-9][0-9]{9}">
+        <button class="btn-verify ${p.mobileVerified?'verified':''}" id="verifyMobileBtn" onclick="verifyMobile()">
+          ${p.mobileVerified?'✓ Verified':'Verify OTP'}
+        </button>
+      </div>
+      <div id="otpSection" style="display:${p.otpSent&&!p.mobileVerified?'block':'none'}" class="mt-1">
+        <div class="otp-row">
+          <input id="otpInput" placeholder="Enter OTP" maxlength="6" type="text">
+          <button class="btn-sm primary" onclick="submitOTP()">Submit</button>
+          <button class="btn-sm" onclick="verifyMobile()">Resend</button>
+        </div>
+        <div class="field-hint">OTP sent to +91-${p.mobileNum||'XXXXXXXXXX'} (Demo: use 123456)</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="required">Email Address</label>
+      <input type="email" id="emailAddr" value="${p.emailAddr||''}" placeholder="your@email.com">
+      <div id="err-email" class="field-error" style="display:none">⚠ Invalid email</div>
+    </div>
+    <div class="form-group">
+      <label class="required">Marital Status</label>
+      <select id="maritalStatus">
+        <option value="">Select</option>
+        ${['Single','Married','Divorced','Widowed'].map(v=>`<option value="${v}" ${p.maritalStatus===v?'selected':''}>${v}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="required">Education</label>
+      <select id="education">
+        <option value="">Select</option>
+        ${['High School','Diploma','Graduate','Post-Graduate','Professional Degree','Doctorate'].map(v=>`<option value="${v}" ${p.education===v?'selected':''}>${v}</option>`).join('')}
+      </select>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <div class="panel-title" style="font-size:16px;margin-bottom:4px">Residential Address</div>
+  <div class="panel-subtitle" style="margin-bottom:1rem">Current address where you reside</div>
+  <div class="form-grid">
+    <div class="form-group full autocomplete-wrap">
+      <label class="required">Address Line 1</label>
+      <input id="addrLine1" value="${state.address.line1||''}" placeholder="Start typing your address..." autocomplete="off" oninput="handleAddressInput(this)">
+      <div id="addrSuggestions" class="autocomplete-list" style="display:none"></div>
+    </div>
+    <div class="form-group full">
+      <label>Address Line 2</label>
+      <input id="addrLine2" value="${state.address.line2||''}" placeholder="Flat/Building No, Landmark">
+    </div>
+    <div class="form-group">
+      <label class="required">City</label>
+      <input id="addrCity" value="${state.address.city||''}" placeholder="City">
+    </div>
+    <div class="form-group">
+      <label class="required">State</label>
+      <select id="addrState">
+        <option value="">Select State</option>
+        ${['Andhra Pradesh','Assam','Bihar','Delhi','Goa','Gujarat','Haryana','Karnataka','Kerala','Madhya Pradesh','Maharashtra','Punjab','Rajasthan','Tamil Nadu','Telangana','Uttar Pradesh','West Bengal'].map(v=>`<option value="${v}" ${state.address.state===v?'selected':''}>${v}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="required">PIN Code</label>
+      <input id="addrPin" value="${state.address.pin||''}" placeholder="6-digit PIN" maxlength="6" pattern="[0-9]{6}">
+    </div>
+    <div class="form-group">
+      <label class="required">Residence Type</label>
+      <select id="resType">
+        <option value="">Select</option>
+        ${['Owned','Rented','Parental','Company Provided'].map(v=>`<option value="${v}" ${state.address.resType===v?'selected':''}>${v}</option>`).join('')}
+      </select>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <div class="panel-title" style="font-size:16px;margin-bottom:4px">Employment Details</div>
+  <div class="panel-subtitle" style="margin-bottom:1rem">Your current employment / professional status</div>
+  <div class="form-grid">
+    <div class="form-group full">
+      <label class="required">Employment Type</label>
+      <div class="radio-group" id="empTypeGroup">
+        ${['salaried','self-employed','business-owner','retired','student'].map(v=>`<div class="radio-option ${p.employmentType===v?'selected':''}" onclick="selectEmpType('${v}')">${v.replace('-',' ').replace(/\b\w/g,c=>c.toUpperCase())}</div>`).join('')}
+      </div>
+    </div>
+    <div id="empDynamic" class="form-group full" style="display:${p.employmentType?'block':'none'}">
+      <div class="form-grid">${empFields}</div>
+    </div>
+  </div>`;
+}
+
+function initPersonal(){
+  // Real-time validation
+  ['firstName','lastName'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.addEventListener('input',e=>{
+      state.personalInfo[id]=e.target.value.trim();
+      validateField(id,v=>v.length>=2,'⚠ Required (min 2 chars)');
+      autoSave();
+    });
+  });
+  const emailEl=document.getElementById('emailAddr');
+  if(emailEl)emailEl.addEventListener('input',e=>{
+    state.personalInfo.emailAddr=e.target.value;
+    validateField('emailAddr',v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),'⚠ Invalid email format','err-email');
+    autoSave();
+  });
+  const dobEl=document.getElementById('dob');
+  if(dobEl)dobEl.addEventListener('change',e=>{
+    const age=(Date.now()-new Date(e.target.value))/(365.25*24*3600*1000);
+    state.personalInfo.dob=e.target.value;
+    if(age<18){document.getElementById('err-dob').style.display='flex';dobEl.classList.add('invalid');}
+    else{document.getElementById('err-dob').style.display='none';dobEl.classList.remove('invalid');dobEl.classList.add('valid');}
+    autoSave();
+  });
+  ['gender','maritalStatus','education'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.addEventListener('change',e=>{state.personalInfo[id]=e.target.value;autoSave();});
+  });
+  ['addrLine1','addrLine2','addrCity','addrPin'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.addEventListener('input',e=>{state.address[id.replace('addr','').replace(/^./,c=>c.toLowerCase())]=e.target.value;autoSave();});
+  });
+  ['addrState','resType'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.addEventListener('change',e=>{state.address[id.replace('addr','').replace('res','res').replace(/^./,c=>c.toLowerCase())]=e.target.value;autoSave();});
+  });
+  const pinEl=document.getElementById('addrPin');
+  if(pinEl)pinEl.addEventListener('input',e=>{
+    state.address.pin=e.target.value;
+    if(e.target.value.length===6)e.target.classList.add('valid');
+    else e.target.classList.remove('valid');
+  });
+  const mobileEl=document.getElementById('mobileNum');
+  if(mobileEl)mobileEl.addEventListener('input',e=>{
+    state.personalInfo.mobileNum=e.target.value;
+    if(/^[6-9][0-9]{9}$/.test(e.target.value))e.target.classList.add('valid');
+    else e.target.classList.remove('valid','invalid');
+  });
+}
+
+function validateField(id,fn,msg,errId){
+  const el=document.getElementById(id);
+  const errEl=document.getElementById(errId||'err-'+id);
+  if(!el)return;
+  const valid=fn(el.value.trim());
+  el.classList.toggle('valid',valid);
+  el.classList.toggle('invalid',!valid&&el.value.length>0);
+  if(errEl)errEl.style.display=(!valid&&el.value.length>0)?'flex':'none';
+}
+
+function handleAddressInput(el){
+  const q=el.value.toLowerCase();
+  const sug=document.getElementById('addrSuggestions');
+  if(q.length<3){sug.style.display='none';return;}
+  const filtered=ADDRESS_SUGGESTIONS.filter(a=>a.line.toLowerCase().includes(q)||a.city.toLowerCase().includes(q));
+  if(!filtered.length){sug.style.display='none';return;}
+  sug.style.display='block';
+  sug.innerHTML=filtered.map((a,i)=>`<div class="autocomplete-item" onclick="selectAddress(${i})">
+    <span class="ac-pin">📍</span>
+    <div class="ac-text"><strong>${a.line}</strong><span>${a.city}</span></div>
+  </div>`).join('');
+  window._acSuggestions=filtered;
+}
+
+function selectAddress(i){
+  const a=window._acSuggestions[i];
+  document.getElementById('addrLine1').value=a.line;
+  state.address.line1=a.line;
+  const parts=a.city.split(',');
+  if(parts.length>=2){
+    const cityPart=parts[0].trim();
+    const statePart=parts[1].trim().split(' ')[0];
+    const pinPart=parts[1].trim().split(' ').pop();
+    document.getElementById('addrCity').value=cityPart;
+    state.address.city=cityPart;
+    if(pinPart.length===6){document.getElementById('addrPin').value=pinPart;state.address.pin=pinPart;}
+    // try to match state
+    const stateEl=document.getElementById('addrState');
+    if(stateEl){
+      const opt=Array.from(stateEl.options).find(o=>o.value.toLowerCase().includes(statePart.toLowerCase()));
+      if(opt){stateEl.value=opt.value;state.address.state=opt.value;}
+    }
+  }
+  document.getElementById('addrSuggestions').style.display='none';
+  autoSave();
+}
+
+function selectEmpType(type){
+  state.personalInfo.employmentType=type;
+  document.querySelectorAll('#empTypeGroup .radio-option').forEach(el=>{
+    el.classList.toggle('selected',el.textContent.toLowerCase().replace(' ','-')===type||el.textContent.toLowerCase().replace(' ','')===type.replace('-',''));
+  });
+  const dyn=document.getElementById('empDynamic');
+  const fields={
+    salaried:`<div class="form-group"><label class="required">Employer Name</label><input id="employerName" value="${state.personalInfo.employerName||''}" placeholder="Company / Organisation name"></div>
+    <div class="form-group"><label class="required">Work Email</label><input id="workEmail" type="email" value="${state.personalInfo.workEmail||''}" placeholder="you@company.com"></div>
+    <div class="form-group"><label>Designation</label><input id="designation" value="${state.personalInfo.designation||''}" placeholder="Job title"></div>
+    <div class="form-group"><label>Work Experience</label><select id="workExp"><option value="">Select</option>${['< 1 year','1-2 years','2-5 years','5-10 years','10+ years'].map(v=>`<option value="${v}" ${state.personalInfo.workExp===v?'selected':''}>${v}</option>`).join('')}</select></div>`,
+    'self-employed':`<div class="form-group"><label class="required">Business Name</label><input id="businessName" value="${state.personalInfo.businessName||''}" placeholder="Business name"></div>
+    <div class="form-group"><label>Business Type</label><select id="businessType"><option value="">Select</option>${['Proprietorship','Partnership','Pvt Ltd','LLP','HUF'].map(v=>`<option value="${v}" ${state.personalInfo.businessType===v?'selected':''}>${v}</option>`).join('')}</select></div>
+    <div class="form-group"><label>Years in Business</label><input id="yearsInBiz" type="number" value="${state.personalInfo.yearsInBiz||''}" placeholder="Years" min="0"></div>
+    <div class="form-group"><label>GST Number</label><input id="gstNum" value="${state.personalInfo.gstNum||''}" placeholder="22AAAAA0000A1Z5" maxlength="15"></div>`,
+    'business-owner':`<div class="form-group"><label class="required">Company Name</label><input id="companyName" value="${state.personalInfo.companyName||''}" placeholder="Registered company name"></div>
+    <div class="form-group"><label>Incorporation Date</label><input type="date" id="incDate" value="${state.personalInfo.incDate||''}"></div>
+    <div class="form-group"><label>CIN / LLPIN</label><input id="cin" value="${state.personalInfo.cin||''}" placeholder="Corporate ID Number"></div>`,
+    retired:`<div class="form-group"><label>Previous Employer</label><input id="prevEmployer" value="${state.personalInfo.prevEmployer||''}" placeholder="Last employer"></div>
+    <div class="form-group"><label>Pension Amount (Monthly)</label><input id="pensionAmt" type="number" value="${state.personalInfo.pensionAmt||''}" placeholder="Monthly pension in ₹"></div>`,
+    student:`<div class="form-group full"><div class="info-box">ℹ️ For student loans, a co-applicant (parent/guardian) may be required depending on loan amount.</div></div>`
+  };
+  dyn.style.display='block';
+  dyn.innerHTML=`<div class="form-grid">${fields[type]||''}</div>`;
+  autoSave();
+}
+
+function verifyMobile(){
+  const mob=document.getElementById('mobileNum').value;
+  if(!/^[6-9][0-9]{9}$/.test(mob)){alert('Please enter a valid 10-digit mobile number');return;}
+  state.personalInfo.mobileNum=mob;
+  state.personalInfo.otpSent=true;
+  document.getElementById('verifyMobileBtn').textContent='Resend OTP';
+  document.getElementById('otpSection').style.display='block';
+  document.querySelector('.field-hint').textContent='OTP sent to +91-'+mob+' (Demo: use 123456)';
+  autoSave();
+}
+
+function submitOTP(){
+  const otp=document.getElementById('otpInput').value;
+  if(otp==='123456'){
+    state.personalInfo.mobileVerified=true;
+    const btn=document.getElementById('verifyMobileBtn');
+    btn.textContent='✓ Verified';btn.classList.add('verified');
+    document.getElementById('otpSection').style.display='none';
+    document.getElementById('mobileNum').classList.add('valid');
+    autoSave();
+  }else{
+    document.getElementById('otpInput').classList.add('invalid');
+    alert('Invalid OTP. Demo: use 123456');
+  }
+}
+
+// STEP 3: KYC
+function renderKYC(){
+  const k=state.kyc||{};
+  return `<div class="panel-title">KYC Verification</div>
+  <div class="panel-subtitle">As per RBI guidelines, KYC is mandatory for all loan applications</div>
+  
+  <div class="info-box">🔒 Your KYC data is encrypted with AES-256 and shared only with authorised agencies per RBI norms.</div>
+
+  <div class="two-col">
+    <div class="form-group">
+      <label class="required">PAN Number</label>
+      <div class="verify-row">
+        <input id="panNum" value="${k.panNum||''}" placeholder="ABCDE1234F" maxlength="10" style="text-transform:uppercase">
+        <button class="btn-verify ${k.panVerified?'verified':''}" id="verifyPanBtn" onclick="verifyPAN()">
+          ${k.panVerified?'✓ Verified':'Verify PAN'}
+        </button>
+      </div>
+      <div id="panResult" style="display:${k.panVerified?'flex':'none'};gap:6px;align-items:center" class="field-success">
+        ✓ PAN verified — <strong>${k.panName||'APPLICANT NAME'}</strong>
+      </div>
+      <div id="panError" class="field-error" style="display:none">⚠ PAN not found or invalid</div>
+    </div>
+    <div class="form-group">
+      <label class="required">Aadhaar Number</label>
+      <div class="verify-row">
+        <input id="aadhaarNum" value="${k.aadhaarNum||''}" placeholder="XXXX XXXX XXXX" maxlength="14" id="aadhaarNum">
+        <button class="btn-verify ${k.aadhaarVerified?'verified':''}" id="verifyAadhaarBtn" onclick="sendAadhaarOTP()">
+          ${k.aadhaarVerified?'✓ Verified':k.aadhaarOtpSent?'OTP Sent':'Send OTP'}
+        </button>
+      </div>
+      <div id="aadhaarOtpSection" style="display:${k.aadhaarOtpSent&&!k.aadhaarVerified?'block':'none'}" class="mt-1">
+        <div class="otp-row">
+          <input id="aadhaarOtp" placeholder="Enter OTP" maxlength="6" type="text">
+          <button class="btn-sm primary" onclick="verifyAadhaarOTP()">Verify</button>
+        </div>
+        <div class="field-hint">OTP sent to UIDAI registered mobile (Demo: use 654321)</div>
+      </div>
+      <div id="aadhaarResult" style="display:${k.aadhaarVerified?'flex':'none'};gap:6px" class="field-success">
+        ✓ Aadhaar verified — Last 4: <strong>${k.aadhaarNum?k.aadhaarNum.replace(/\s/g,'').slice(-4):'XXXX'}</strong>
+      </div>
+    </div>
+  </div>
+
+  ${state.loanType==='business'?`
+  <hr class="divider">
+  <div class="panel-title" style="font-size:16px;margin-bottom:4px">Business KYC</div>
+  <div class="panel-subtitle" style="margin-bottom:1rem">Required for Business Loan applications</div>
+  <div class="two-col">
+    <div class="form-group">
+      <label class="required">GST Number</label>
+      <div class="verify-row">
+        <input id="gstVerify" value="${k.gstNum||''}" placeholder="22AAAAA0000A1Z5" maxlength="15">
+        <button class="btn-verify ${k.gstVerified?'verified':''}" onclick="verifyGST()">${k.gstVerified?'✓ Verified':'Verify GST'}</button>
+      </div>
+      <div id="gstResult" style="display:${k.gstVerified?'flex':'none'}" class="field-success">✓ GST verified — Active filing history</div>
+    </div>
+    <div class="form-group">
+      <label>UDYAM / MSME Registration</label>
+      <input id="udyamNum" value="${k.udyamNum||''}" placeholder="UDYAM-XX-00-0000000">
+    </div>
+  </div>
+  `:''}
+
+  <hr class="divider">
+  <div class="panel-title" style="font-size:16px;margin-bottom:4px">Credit Bureau Consent</div>
+  <div class="panel-subtitle" style="margin-bottom:1rem">We need your consent to pull your credit score</div>
+  <div class="checkbox-group">
+    <div class="check-option">
+      <input type="checkbox" id="cibilConsent" ${k.cibilConsent?'checked':''} onchange="state.kyc.cibilConsent=this.checked;autoSave()">
+      <label for="cibilConsent">I consent to NexaFinance fetching my CIBIL / Experian credit report for loan processing purposes</label>
+    </div>
+    <div class="check-option">
+      <input type="checkbox" id="bureauConsent" ${k.bureauConsent?'checked':''} onchange="state.kyc.bureauConsent=this.checked;autoSave()">
+      <label for="bureauConsent">I authorise NexaFinance to share my information with credit bureaus and partner lending institutions</label>
+    </div>
+  </div>
+
+  ${k.cibilConsent?`<div id="creditResult" class="mt-2" style="background:var(--success-light);border:1px solid rgba(5,150,105,0.3);border-radius:var(--radius);padding:12px 14px;display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:24px">📈</span>
+      <div><div style="font-size:13px;font-weight:600;color:var(--success)">Credit Score Retrieved</div>
+      <div style="font-size:12px;color:var(--ink3)">CIBIL Score as of ${new Date().toLocaleDateString('en-IN')}</div></div>
+    </div>
+    <div style="text-align:right"><div style="font-size:28px;font-weight:700;color:var(--success)">742</div>
+    <div style="font-size:11px;color:var(--success)">Good</div></div>
+  </div>`:''}`;
+}
+
+function initKYC(){
+  const panEl=document.getElementById('panNum');
+  if(panEl)panEl.addEventListener('input',e=>{
+    e.target.value=e.target.value.toUpperCase();
+    state.kyc.panNum=e.target.value;
+    if(/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(e.target.value))e.target.classList.add('valid');
+    else e.target.classList.remove('valid');
+  });
+  const aEl=document.getElementById('aadhaarNum');
+  if(aEl)aEl.addEventListener('input',e=>{
+    let v=e.target.value.replace(/\D/g,'').substring(0,12);
+    e.target.value=v.replace(/(\d{4})(?=\d)/g,'$1 ');
+    state.kyc.aadhaarNum=e.target.value;
+  });
+}
+
+function verifyPAN(){
+  const pan=document.getElementById('panNum').value.toUpperCase();
+  if(!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(pan)){
+    document.getElementById('panError').style.display='flex';
+    document.getElementById('panNum').classList.add('invalid');return;
+  }
+  const btn=document.getElementById('verifyPanBtn');
+  btn.innerHTML='<span class="spinner"></span>';
+  setTimeout(()=>{
+    state.kyc.panVerified=true;state.kyc.panNum=pan;
+    const firstName=state.personalInfo.firstName||'';
+    const lastName=state.personalInfo.lastName||'';
+    state.kyc.panName=(firstName+' '+lastName).toUpperCase().trim()||'APPLICANT NAME';
+    btn.textContent='✓ Verified';btn.classList.add('verified');
+    document.getElementById('panResult').style.display='flex';
+    document.getElementById('panResult').innerHTML=`✓ PAN verified — <strong style="margin-left:4px">${state.kyc.panName}</strong>`;
+    document.getElementById('panError').style.display='none';
+    document.getElementById('panNum').classList.remove('invalid');
+    document.getElementById('panNum').classList.add('valid');
+    autoSave();
+  },1500);
+}
+
+function sendAadhaarOTP(){
+  const aadhaar=document.getElementById('aadhaarNum').value.replace(/\s/g,'');
+  if(aadhaar.length!==12||!/^\d{12}$/.test(aadhaar)){alert('Please enter a valid 12-digit Aadhaar number');return;}
+  state.kyc.aadhaarOtpSent=true;
+  document.getElementById('verifyAadhaarBtn').textContent='Resend OTP';
+  document.getElementById('aadhaarOtpSection').style.display='block';
+  autoSave();
+}
+
+function verifyAadhaarOTP(){
+  const otp=document.getElementById('aadhaarOtp').value;
+  if(otp==='654321'){
+    state.kyc.aadhaarVerified=true;
+    document.getElementById('verifyAadhaarBtn').textContent='✓ Verified';
+    document.getElementById('verifyAadhaarBtn').classList.add('verified');
+    document.getElementById('aadhaarOtpSection').style.display='none';
+    document.getElementById('aadhaarResult').style.display='flex';
+    document.getElementById('aadhaarNum').classList.add('valid');
+    autoSave();
+  }else{
+    document.getElementById('aadhaarOtp').classList.add('invalid');
+    alert('Invalid OTP. Demo: use 654321');
+  }
+}
+
+function verifyGST(){
+  const gst=document.getElementById('gstVerify').value.toUpperCase();
+  if(!/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(gst)){alert('Invalid GST format');return;}
+  const btn=document.querySelector('button[onclick="verifyGST()"]');
+  btn.innerHTML='<span class="spinner"></span>';
+  setTimeout(()=>{
+    state.kyc.gstVerified=true;state.kyc.gstNum=gst;
+    btn.textContent='✓ Verified';btn.classList.add('verified');
+    document.getElementById('gstResult').style.display='flex';
+    autoSave();
+  },1200);
+}
+
+// STEP 4: FINANCIALS
+function renderFinancials(){
+  const f=state.financials||{};
+  const isPersonalSalaried=state.loanType==='personal'&&state.personalInfo.employmentType==='salaried';
+  const isBusiness=state.loanType==='business';
+  const isHome=state.loanType==='home';
+  return `<div class="panel-title">Financial Details</div>
+  <div class="panel-subtitle">Your financial information helps us determine the best loan offer</div>
+  
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tab-income" onclick="switchTab('income')">Income</button>
+    <button class="tab-btn" id="tab-expenses" onclick="switchTab('expenses')">Liabilities</button>
+    <button class="tab-btn" id="tab-assets" onclick="switchTab('assets')">Assets</button>
+    ${isBusiness?'<button class="tab-btn" id="tab-biz" onclick="switchTab(\'biz\')">Business</button>':''}
+  </div>
+
+  <div id="tab-income-content" class="tab-content active">
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="required">Monthly Gross Income</label>
+        <input type="number" id="grossIncome" value="${f.grossIncome||''}" placeholder="₹" min="0">
+        <div class="field-hint">Before taxes and deductions</div>
+      </div>
+      <div class="form-group">
+        <label class="required">Monthly Net Income</label>
+        <input type="number" id="netIncome" value="${f.netIncome||''}" placeholder="₹" min="0">
+        <div id="incomeCalc" class="field-hint" style="display:none"></div>
+      </div>
+      ${isPersonalSalaried?`
+      <div class="form-group">
+        <label>Other Monthly Income</label>
+        <input type="number" id="otherIncome" value="${f.otherIncome||''}" placeholder="Rental / Freelance / Dividends">
+      </div>
+      <div class="form-group">
+        <label>Annual Bonus (approx)</label>
+        <input type="number" id="annualBonus" value="${f.annualBonus||''}" placeholder="Last year's bonus">
+      </div>`:''}
+      ${isBusiness?`
+      <div class="form-group">
+        <label class="required">Annual Business Turnover</label>
+        <input type="number" id="bizTurnover" value="${f.bizTurnover||''}" placeholder="₹ Turnover last FY">
+      </div>
+      <div class="form-group">
+        <label class="required">Net Profit (Annual)</label>
+        <input type="number" id="netProfit" value="${f.netProfit||''}" placeholder="₹ Net profit last FY">
+      </div>`:''}
+      ${isHome?`
+      <div class="form-group">
+        <label class="required">Co-Applicant Income</label>
+        <select id="hasCoApp">
+          <option value="">Select</option>
+          <option value="yes" ${f.hasCoApp==='yes'?'selected':''}>Yes — adding co-applicant</option>
+          <option value="no" ${f.hasCoApp==='no'?'selected':''}>No — sole applicant</option>
+        </select>
+      </div>
+      <div id="coAppIncome" style="display:${f.hasCoApp==='yes'?'block':'none'}" class="form-group">
+        <label>Co-Applicant Monthly Income</label>
+        <input type="number" id="coAppIncomeAmt" value="${f.coAppIncomeAmt||''}" placeholder="₹ Net monthly income">
+      </div>`:''}
+    </div>
+    <div id="foir-display"></div>
+  </div>
+
+  <div id="tab-expenses-content" class="tab-content">
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Existing EMI (Total Monthly)</label>
+        <input type="number" id="existingEMI" value="${f.existingEMI||0}" placeholder="₹ All ongoing EMIs" min="0">
+      </div>
+      <div class="form-group">
+        <label>Credit Card Outstanding</label>
+        <input type="number" id="ccOutstanding" value="${f.ccOutstanding||0}" placeholder="₹ Total dues" min="0">
+      </div>
+      <div class="form-group">
+        <label>Monthly Rent (if any)</label>
+        <input type="number" id="monthlyRent" value="${f.monthlyRent||0}" placeholder="₹" min="0">
+      </div>
+      <div class="form-group">
+        <label>Other Liabilities</label>
+        <input type="number" id="otherLiabilities" value="${f.otherLiabilities||0}" placeholder="₹" min="0">
+      </div>
+    </div>
+    <div id="debtRatio" class="mt-2"></div>
+  </div>
+
+  <div id="tab-assets-content" class="tab-content">
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Savings / FD / Mutual Funds</label>
+        <input type="number" id="savings" value="${f.savings||0}" placeholder="₹ Total liquid assets" min="0">
+      </div>
+      <div class="form-group">
+        <label>Real Estate (Market Value)</label>
+        <input type="number" id="realEstate" value="${f.realEstate||0}" placeholder="₹" min="0">
+      </div>
+      <div class="form-group">
+        <label>Vehicles (Approx Value)</label>
+        <input type="number" id="vehicles" value="${f.vehicles||0}" placeholder="₹" min="0">
+      </div>
+      <div class="form-group">
+        <label>Other Assets</label>
+        <input type="number" id="otherAssets" value="${f.otherAssets||0}" placeholder="₹" min="0">
+      </div>
+    </div>
+  </div>
+
+  ${isBusiness?`<div id="tab-biz-content" class="tab-content">
+    <div class="form-grid">
+      <div class="form-group"><label class="required">Industry Sector</label>
+      <select id="industrySector"><option value="">Select</option>
+      ${['Manufacturing','Retail & Trade','Services','Healthcare','IT & Software','Construction','Agriculture','Export-Import','Education','Hospitality'].map(v=>`<option value="${v}" ${f.industrySector===v?'selected':''}>${v}</option>`).join('')}
+      </select></div>
+      <div class="form-group"><label>No. of Employees</label>
+      <select id="numEmployees"><option value="">Select</option>
+      ${['1-5','6-20','21-50','51-200','200+'].map(v=>`<option value="${v}" ${f.numEmployees===v?'selected':''}>${v}</option>`).join('')}
+      </select></div>
+      <div class="form-group"><label>Existing Business Loans</label>
+      <input type="number" id="bizLoans" value="${f.bizLoans||0}" placeholder="₹ Outstanding principal"></div>
+      <div class="form-group"><label>Collateral Available</label>
+      <select id="collateral"><option value="">Select</option>
+      ${['None','Property','FD/Securities','Machinery','Inventory','Receivables'].map(v=>`<option value="${v}" ${f.collateral===v?'selected':''}>${v}</option>`).join('')}
+      </select></div>
+    </div>
+  </div>`:''}`;
+}
+
+function initFinancials(){
+  const allIds=['grossIncome','netIncome','otherIncome','annualBonus','bizTurnover','netProfit','existingEMI','ccOutstanding','monthlyRent','otherLiabilities','savings','realEstate','vehicles','otherAssets','bizLoans','coAppIncomeAmt'];
+  allIds.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.addEventListener('input',e=>{state.financials[id]=parseInt(e.target.value)||0;updateFOIR();autoSave();});
+  });
+  const sels=['hasCoApp','industrySector','numEmployees','collateral'];
+  sels.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.addEventListener('change',e=>{
+      state.financials[id]=e.target.value;
+      if(id==='hasCoApp'){document.getElementById('coAppIncome').style.display=e.target.value==='yes'?'block':'none';}
+      autoSave();
+    });
+  });
+  updateFOIR();
+}
+
+function updateFOIR(){
+  const f=state.financials;
+  const net=f.netIncome||0,emi=f.existingEMI||0;
+  if(!net)return;
+  const rate=INTEREST_RATES[state.loanType]||0.12;
+  const newEMI=calcEMI(state.loanAmount,rate,state.loanTenure);
+  const totalEMI=emi+newEMI;
+  const foir=Math.round((totalEMI/net)*100);
+  const status=foir<40?{c:'success',t:'Excellent eligibility'}:foir<55?{c:'warn',t:'Moderate eligibility'}:{c:'danger',t:'May affect eligibility'};
+  const foirEl=document.getElementById('foir-display');
+  if(foirEl)foirEl.innerHTML=`<div class="mt-2" style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:12px">
+    <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px">
+      <span style="color:var(--ink2);font-weight:600">FOIR (Fixed Obligation Income Ratio)</span>
+      <span class="badge ${status.c}">${foir}% — ${status.t}</span>
+    </div>
+    <div style="background:var(--border);height:8px;border-radius:4px;overflow:hidden">
+      <div style="height:100%;width:${Math.min(foir,100)}%;background:${foir<40?'var(--success)':foir<55?'var(--warn)':'var(--danger)'};border-radius:4px;transition:width 0.5s"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--ink3);margin-top:4px">
+      <span>Existing EMI: ${formatINR(emi)}</span><span>New EMI: ${formatINR(newEMI)}</span><span>Net Income: ${formatINR(net)}</span>
+    </div>
+  </div>`;
+}
+
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  const tb=document.getElementById('tab-'+tab);
+  const tc=document.getElementById('tab-'+tab+'-content');
+  if(tb)tb.classList.add('active');
+  if(tc)tc.classList.add('active');
+}
+
+// STEP 5: DOCUMENTS
+function renderDocuments(){
+  const reqs=DOC_REQUIREMENTS[state.loanType]||DOC_REQUIREMENTS.personal;
+  return `<div class="panel-title">Document Upload</div>
+  <div class="panel-subtitle">Upload required documents — max 5MB per file. PDFs and images accepted.</div>
+  
+  <div class="two-col">
+    <div>
+      <div style="font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.3px;font-size:11px">Required Documents</div>
+      <div class="doc-req-list" id="docReqList">${reqs.map(r=>`
+        <div class="doc-req-item ${state.documents.some(d=>d.type===r)?'uploaded':''}" id="req-${r.replace(/\s/g,'_')}">
+          <div class="check">${state.documents.some(d=>d.type===r)?'✓':''}</div>
+          <span style="font-size:13px">${r}</span>
+        </div>`).join('')}
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:600;color:var(--ink2);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.3px">Upload Zone</div>
+      <div class="doc-upload-zone" id="dropZone" onclick="triggerUpload()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event)">
+        <div class="upload-icon">☁️</div>
+        <h4>Click or drag files here</h4>
+        <p>PDF, JPG, PNG up to 5MB each</p>
+        <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png" style="display:none" onchange="handleFiles(this.files)">
+      </div>
+      <div style="margin-top:8px">
+        <select id="docTypeSelect" style="font-size:13px;padding:7px 10px;border-radius:8px">
+          <option value="">Select document type before uploading</option>
+          ${reqs.map(r=>`<option value="${r}">${r}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="doc-list" id="docList"></div>`;
+}
+
+function initDocuments(){
+  renderDocList();
+}
+
+function triggerUpload(){
+  if(!document.getElementById('docTypeSelect').value){alert('Please select a document type first');return;}
+  document.getElementById('fileInput').click();
+}
+
+function handleDrop(e){
+  e.preventDefault();
+  document.getElementById('dropZone').classList.remove('drag');
+  if(!document.getElementById('docTypeSelect').value){alert('Please select document type first');return;}
+  handleFiles(e.dataTransfer.files);
+}
+
+function handleFiles(files){
+  const type=document.getElementById('docTypeSelect').value;
+  Array.from(files).forEach(file=>{
+    const sizeKB=Math.round(file.size/1024);
+    const compressed=sizeKB>500;
+    const finalSize=compressed?Math.round(sizeKB*0.6):sizeKB;
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const doc={id:Date.now(),name:file.name,type:type,size:finalSize,compressed,preview:file.type.startsWith('image')?e.target.result:null,status:'ok'};
+      if(file.size>5*1024*1024){doc.status='error';doc.statusText='File too large (max 5MB)'}
+      else if(compressed)doc.statusText='Compressed to save bandwidth';
+      else doc.statusText='Ready';
+      state.documents=state.documents.filter(d=>d.type!==type);
+      state.documents.push(doc);
+      renderDocList();
+      updateDocReqs();
+      autoSave();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderDocList(){
+  const list=document.getElementById('docList');
+  if(!list)return;
+  if(!state.documents.length){list.innerHTML='<div style="text-align:center;padding:1rem;color:var(--ink3);font-size:13px">No documents uploaded yet</div>';return;}
+  list.innerHTML=state.documents.map(doc=>`<div class="doc-item">
+    ${doc.preview?`<img src="${doc.preview}" class="doc-preview">`:`<div class="doc-item-icon">📄</div>`}
+    <div class="doc-item-info">
+      <div class="doc-item-name">${doc.name}</div>
+      <div class="doc-item-meta">${doc.type} · ${doc.size}KB${doc.compressed?' · Compressed ✓':''}</div>
+    </div>
+    <span class="doc-item-status ${doc.status==='error'?'error':doc.compressed?'compress':'ok'}">${doc.status==='error'?'⚠ Error':doc.compressed?'Compressed':'✓ Ready'}</span>
+    <button class="doc-remove" onclick="removeDoc(${doc.id})">✕</button>
+  </div>`).join('');
+}
+
+function updateDocReqs(){
+  const reqs=DOC_REQUIREMENTS[state.loanType]||[];
+  reqs.forEach(r=>{
+    const el=document.getElementById('req-'+r.replace(/\s/g,'_'));
+    if(el){
+      const uploaded=state.documents.some(d=>d.type===r);
+      el.classList.toggle('uploaded',uploaded);
+      const check=el.querySelector('.check');
+      if(check)check.textContent=uploaded?'✓':'';
+    }
+  });
+}
+
+function removeDoc(id){
+  state.documents=state.documents.filter(d=>d.id!==id);
+  renderDocList();updateDocReqs();autoSave();
+}
+
+// STEP 6: REFERENCES
+function renderReferences(){
+  return `<div class="panel-title">Personal References</div>
+  <div class="panel-subtitle">Please provide ${state.loanType==='business'?'3':'2'} personal references who know you well</div>
+  
+  <div class="info-box">ℹ️ References should not be immediate family members. Ensure they are aware they may be contacted.</div>
+  
+  <div class="references-list" id="refList"></div>
+  
+  <button class="btn-sm" style="margin-top:8px" onclick="addReference()">+ Add Reference</button>`;
+}
+
+function initReferences(){
+  if(!state.references||!state.references.length)state.references=[{name:'',phone:'',relation:'',email:''}];
+  if(state.loanType==='business'&&state.references.length<2)state.references.push({name:'',phone:'',relation:'',email:''},{name:'',phone:'',relation:'',email:''});
+  renderRefList();
+}
+
+function renderRefList(){
+  const el=document.getElementById('refList');
+  if(!el)return;
+  el.innerHTML=state.references.map((r,i)=>`<div class="ref-item">
+    <div class="ref-item-header">
+      <span class="ref-num">Reference ${i+1}</span>
+      ${i>0?`<button class="remove-ref" onclick="removeRef(${i})">✕</button>`:''}
+    </div>
+    <div class="form-grid">
+      <div class="form-group"><label class="required">Full Name</label>
+      <input value="${r.name||''}" placeholder="Full name" oninput="updateRef(${i},'name',this.value)"></div>
+      <div class="form-group"><label class="required">Relationship</label>
+      <select onchange="updateRef(${i},'relation',this.value)">
+        <option value="">Select</option>
+        ${['Friend','Colleague','Neighbour','Business Partner','Mentor','Other'].map(v=>`<option value="${v}" ${r.relation===v?'selected':''}>${v}</option>`).join('')}
+      </select></div>
+      <div class="form-group"><label class="required">Mobile Number</label>
+      <input value="${r.phone||''}" placeholder="10-digit mobile" maxlength="10" oninput="updateRef(${i},'phone',this.value)"></div>
+      <div class="form-group"><label>Email</label>
+      <input type="email" value="${r.email||''}" placeholder="email@example.com" oninput="updateRef(${i},'email',this.value)"></div>
+    </div>
+  </div>`).join('');
+}
+
+function updateRef(i,key,val){state.references[i][key]=val;autoSave();}
+function addReference(){if(state.references.length<5){state.references.push({name:'',phone:'',relation:'',email:''});renderRefList();}else alert('Maximum 5 references allowed');}
+function removeRef(i){state.references.splice(i,1);renderRefList();autoSave();}
+
+// STEP 7: SIGNATURE
+function renderSignature(){
+  return `<div class="panel-title">E-Signature</div>
+  <div class="panel-subtitle">Your electronic signature has the same legal standing as a handwritten signature under IT Act 2000</div>
+  
+  <div class="tab-bar" style="max-width:400px">
+    <button class="tab-btn active" id="tab-draw" onclick="switchSigTab('draw')">Draw Signature</button>
+    <button class="tab-btn" id="tab-type" onclick="switchSigTab('type')">Type Signature</button>
+    <button class="tab-btn" id="tab-upload" onclick="switchSigTab('upload')">Upload</button>
+  </div>
+
+  <div id="sig-draw-content" style="display:block">
+    <div class="sig-wrap">
+      <div class="sig-toolbar">
+        <span>🖊 Draw your signature below</span>
+        <div style="margin-left:auto;display:flex;gap:6px;align-items:center">
+          <label style="font-size:11px;color:var(--ink3);text-transform:none;letter-spacing:0">Color:</label>
+          <input type="color" id="sigColor" value="#1a1a2e" style="width:28px;height:24px;padding:2px;border-radius:4px;cursor:pointer">
+          <label style="font-size:11px;color:var(--ink3);text-transform:none;letter-spacing:0">Size:</label>
+          <input type="range" id="sigSize" min="1" max="8" value="3" style="width:60px">
+        </div>
+      </div>
+      <canvas id="sigCanvas"></canvas>
+      <div class="sig-actions">
+        <button class="btn-sm danger" onclick="clearSig()">Clear</button>
+        <button class="btn-sm primary" onclick="saveSig()">Save Signature</button>
+        <div id="sigSavedMsg" style="display:none;font-size:12px;color:var(--success);margin-left:auto">✓ Signature saved</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="sig-type-content" style="display:none;margin-top:0">
+    <div class="form-group" style="margin-bottom:1rem">
+      <label>Type your full name</label>
+      <input id="typedSig" placeholder="${state.personalInfo.firstName||'Your'} ${state.personalInfo.lastName||'Name'}" oninput="renderTypedSig()">
+    </div>
+    <div id="typedSigPreview" style="min-height:80px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;justify-content:center">
+      <span style="font-family:'Playfair Display',serif;font-size:28px;color:var(--ink)">${state.personalInfo.firstName||''} ${state.personalInfo.lastName||''}</span>
+    </div>
+    <button class="btn-sm primary mt-1" onclick="saveTypedSig()">Use This Signature</button>
+  </div>
+
+  <div id="sig-upload-content" style="display:none">
+    <div class="doc-upload-zone" onclick="document.getElementById('sigFileInput').click()" style="max-height:120px;padding:1.5rem">
+      <div class="upload-icon" style="font-size:24px">🖼</div>
+      <p>Upload signature image (PNG/JPG)</p>
+      <input type="file" id="sigFileInput" accept="image/*" style="display:none" onchange="handleSigUpload(this)">
+    </div>
+  </div>
+
+  <div class="sig-consent">
+    <input type="checkbox" id="sigConsentCheck" ${state.sigConsent?'checked':''} onchange="state.sigConsent=this.checked;autoSave()">
+    <label for="sigConsentCheck">I hereby declare that I have read and understood all the terms and conditions of the loan application. I confirm that all information provided is accurate and true. I consent to NexaFinance processing my application and contacting me via the provided channels. This e-signature shall be legally binding under the Information Technology Act, 2000.</label>
+  </div>`;
+}
+
+let sigCanvas,sigCtx,sigDrawing=false,sigLastX=0,sigLastY=0;
+
+function initSignature(){
+  sigCanvas=document.getElementById('sigCanvas');
+  if(!sigCanvas)return;
+  const w=sigCanvas.parentElement.clientWidth||560;
+  sigCanvas.width=w;sigCanvas.height=180;
+  sigCtx=sigCanvas.getContext('2d');
+  sigCtx.strokeStyle='#1a1a2e';sigCtx.lineWidth=3;sigCtx.lineCap='round';sigCtx.lineJoin='round';
+  
+  const getPos=(e)=>{const r=sigCanvas.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:(t.clientX-r.left)*(sigCanvas.width/r.width),y:(t.clientY-r.top)*(sigCanvas.height/r.height)}};
+  const start=(e)=>{e.preventDefault();sigDrawing=true;const p=getPos(e);sigLastX=p.x;sigLastY=p.y;sigCtx.beginPath();sigCtx.arc(p.x,p.y,sigCtx.lineWidth/2,0,Math.PI*2);sigCtx.fillStyle=sigCtx.strokeStyle;sigCtx.fill()};
+  const draw=(e)=>{if(!sigDrawing)return;e.preventDefault();const p=getPos(e);sigCtx.beginPath();sigCtx.moveTo(sigLastX,sigLastY);sigCtx.lineTo(p.x,p.y);sigCtx.stroke();sigLastX=p.x;sigLastY=p.y};
+  const end=()=>{sigDrawing=false};
+  sigCanvas.addEventListener('mousedown',start);sigCanvas.addEventListener('mousemove',draw);sigCanvas.addEventListener('mouseup',end);sigCanvas.addEventListener('mouseleave',end);
+  sigCanvas.addEventListener('touchstart',start,{passive:false});sigCanvas.addEventListener('touchmove',draw,{passive:false});sigCanvas.addEventListener('touchend',end);
+  
+  const colorPicker=document.getElementById('sigColor');
+  if(colorPicker)colorPicker.addEventListener('input',e=>sigCtx.strokeStyle=e.target.value);
+  const sizePicker=document.getElementById('sigSize');
+  if(sizePicker)sizePicker.addEventListener('input',e=>sigCtx.lineWidth=parseInt(e.target.value));
+
+  if(state.signature){
+    const img=new Image();
+    img.onload=()=>sigCtx.drawImage(img,0,0);
+    img.src=state.signature;
+  }
+}
+
+function clearSig(){sigCtx&&sigCtx.clearRect(0,0,sigCanvas.width,sigCanvas.height);state.signature=null;document.getElementById('sigSavedMsg').style.display='none';}
+function saveSig(){if(!sigCanvas)return;state.signature=sigCanvas.toDataURL();document.getElementById('sigSavedMsg').style.display='inline';autoSave();}
+function renderTypedSig(){const v=document.getElementById('typedSig').value;document.getElementById('typedSigPreview').innerHTML=`<span style="font-family:'Playfair Display',serif;font-size:28px;color:var(--ink)">${v||((state.personalInfo.firstName||'')+' '+(state.personalInfo.lastName||''))}</span>`;}
+function saveTypedSig(){state.signature='typed:'+document.getElementById('typedSig').value;alert('Signature saved ✓');}
+function handleSigUpload(inp){if(!inp.files[0])return;const r=new FileReader();r.onload=e=>{state.signature=e.target.result;alert('Signature uploaded ✓');};r.readAsDataURL(inp.files[0]);}
+function switchSigTab(tab){
+  ['draw','type','upload'].forEach(t=>{
+    const btn=document.getElementById('tab-'+t);const cont=document.getElementById('sig-'+t+'-content');
+    if(btn)btn.classList.toggle('active',t===tab);
+    if(cont)cont.style.display=t===tab?'block':'none';
+  });
+  if(tab==='draw')setTimeout(initSignature,50);
+}
+
+// STEP 8: SUMMARY
+function renderSummary(){
+  const rate=(INTEREST_RATES[state.loanType]||0.12)*100;
+  const emi=calcEMI(state.loanAmount,rate/100,state.loanTenure);
+  const totalPayable=emi*state.loanTenure;
+  const reqs=DOC_REQUIREMENTS[state.loanType]||[];
+  const docsUploaded=state.documents.filter(d=>reqs.includes(d.type)).length;
+  const score=Math.min(100,Math.round(40+(state.kyc.panVerified?15:0)+(state.kyc.aadhaarVerified?15:0)+(docsUploaded/reqs.length)*20+(state.financials.netIncome>50000?10:5)));
+  
+  return `<div class="panel-title">Pre-Approval Summary</div>
+  <div class="panel-subtitle">Review your application before final submission</div>
+  
+  <div class="approval-badge">
+    <h2>🎉 Pre-Approval Score</h2>
+    <p>Based on your profile, your pre-approval probability is <strong>${score}%</strong></p>
+    <div class="score-bar"><div class="score-fill" id="scoreFill" style="width:0%"></div></div>
+  </div>
+
+  <div class="summary-section">
+    <h3>💼 Loan Details</h3>
+    <div class="summary-row"><span class="lbl">Loan Type</span><span class="val">${(state.loanType||'').replace(/\b\w/g,c=>c.toUpperCase())} Loan</span></div>
+    <div class="summary-row"><span class="lbl">Loan Amount</span><span class="val">${formatINR(state.loanAmount)}</span></div>
+    <div class="summary-row"><span class="lbl">Loan Tenure</span><span class="val">${state.loanTenure} months</span></div>
+    <div class="summary-row"><span class="lbl">Interest Rate</span><span class="val">${rate.toFixed(1)}% p.a.</span></div>
+    <div class="summary-row"><span class="lbl">Monthly EMI</span><span class="val" style="color:var(--accent)">${formatINR(emi)}</span></div>
+    <div class="summary-row"><span class="lbl">Total Payable</span><span class="val">${formatINR(Math.round(totalPayable))}</span></div>
+    ${state.loanPurpose?`<div class="summary-row"><span class="lbl">Purpose</span><span class="val">${state.loanPurpose}</span></div>`:''}
+  </div>
+
+  <div class="summary-section">
+    <h3>👤 Applicant</h3>
+    <div class="summary-row"><span class="lbl">Name</span><span class="val">${state.personalInfo.firstName||'—'} ${state.personalInfo.lastName||''}</span></div>
+    <div class="summary-row"><span class="lbl">Mobile</span><span class="val">${state.personalInfo.mobileNum||'—'} ${state.personalInfo.mobileVerified?'<span class="badge success" style="font-size:10px">Verified</span>':''}</span></div>
+    <div class="summary-row"><span class="lbl">Email</span><span class="val">${state.personalInfo.emailAddr||'—'}</span></div>
+    <div class="summary-row"><span class="lbl">Employment</span><span class="val">${(state.personalInfo.employmentType||'—').replace('-',' ').replace(/\b\w/g,c=>c.toUpperCase())}</span></div>
+    <div class="summary-row"><span class="lbl">City</span><span class="val">${state.address.city||'—'}, ${state.address.state||'—'}</span></div>
+  </div>
+
+  <div class="summary-section">
+    <h3>🔐 KYC Status</h3>
+    <div class="summary-row"><span class="lbl">PAN</span><span class="val">${state.kyc.panNum||'—'} ${state.kyc.panVerified?'<span class="badge success" style="font-size:10px">✓ Verified</span>':'<span class="badge warn" style="font-size:10px">Pending</span>'}</span></div>
+    <div class="summary-row"><span class="lbl">Aadhaar</span><span class="val">●●●● ●●●● ${state.kyc.aadhaarNum?state.kyc.aadhaarNum.replace(/\s/g,'').slice(-4):'XXXX'} ${state.kyc.aadhaarVerified?'<span class="badge success" style="font-size:10px">✓ Verified</span>':'<span class="badge warn" style="font-size:10px">Pending</span>'}</span></div>
+    <div class="summary-row"><span class="lbl">Credit Score</span><span class="val">${state.kyc.cibilConsent?'742 <span class="badge success" style="font-size:10px">Good</span>':'Consent not given'}</span></div>
+  </div>
+
+  <div class="summary-section">
+    <h3>📁 Documents</h3>
+    ${reqs.map(r=>{const doc=state.documents.find(d=>d.type===r);return`<div class="summary-row"><span class="lbl">${r}</span><span class="val">${doc?'<span class="badge success" style="font-size:10px">✓ Uploaded</span>':'<span class="badge warn" style="font-size:10px">Missing</span>'}</span></div>`;}).join('')}
+  </div>
+
+  <div class="summary-section">
+    <h3>🔬 E2E Test Coverage</h3>
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tab-testall" onclick="switchTab('testall')">All Tests</button>
+      <button class="tab-btn" id="tab-testrun" onclick="runTests()">▶ Run Tests</button>
+    </div>
+    <div id="tab-testall-content" class="tab-content active">
+      <div class="test-panel">
+        <div class="test-header"><span>TEST SUITE — LOAN APPLICATION E2E</span><button class="test-run-btn" onclick="runTests()">RUN ALL</button></div>
+        <div class="test-body" id="testOutput"><div style="color:#6060a0;font-size:12px;padding:4px 0">Click RUN ALL to execute tests...</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn-box">⚠️ By submitting, you confirm all information is accurate. False declarations may lead to application rejection and legal action.</div>`;
+}
+
+function initSummary(){
+  setTimeout(()=>{
+    const fill=document.getElementById('scoreFill');
+    const rate=(INTEREST_RATES[state.loanType]||0.12)*100;
+    const emi=calcEMI(state.loanAmount,rate/100,state.loanTenure);
+    const reqs=DOC_REQUIREMENTS[state.loanType]||[];
+    const docsUploaded=state.documents.filter(d=>reqs.includes(d.type)).length;
+    const score=Math.min(100,Math.round(40+(state.kyc.panVerified?15:0)+(state.kyc.aadhaarVerified?15:0)+(docsUploaded/reqs.length)*20+(state.financials.netIncome>50000?10:5)));
+    if(fill)fill.style.width=score+'%';
+  },200);
+}
+
+// TESTS
+const TESTS=[
+  {name:'Step 1: Loan type selected',fn:()=>!!state.loanType},
+  {name:'Step 1: Loan amount within valid range',fn:()=>{const r=LOAN_RANGES[state.loanType];return state.loanAmount>=r.min&&state.loanAmount<=r.max;}},
+  {name:'Step 1: EMI calculation positive',fn:()=>calcEMI(state.loanAmount,INTEREST_RATES[state.loanType],state.loanTenure)>0},
+  {name:'Step 2: First name provided',fn:()=>(state.personalInfo.firstName||'').length>=2},
+  {name:'Step 2: Valid email format',fn:()=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.personalInfo.emailAddr||'')},
+  {name:'Step 2: Valid mobile number',fn:()=>/^[6-9][0-9]{9}$/.test(state.personalInfo.mobileNum||'')},
+  {name:'Step 2: DOB — applicant is 18+',fn:()=>{if(!state.personalInfo.dob)return false;return (Date.now()-new Date(state.personalInfo.dob))/(365.25*24*3600*1000)>=18;}},
+  {name:'Step 2: Address has PIN code',fn:()=>/^[0-9]{6}$/.test(state.address.pin||'')},
+  {name:'Step 3: PAN format valid',fn:()=>/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(state.kyc.panNum||'')},
+  {name:'Step 3: PAN verified via API',fn:()=>state.kyc.panVerified===true},
+  {name:'Step 3: Aadhaar verified via OTP',fn:()=>state.kyc.aadhaarVerified===true},
+  {name:'Step 3: CIBIL consent given',fn:()=>state.kyc.cibilConsent===true},
+  {name:'Step 4: Net income > 0',fn:()=>(state.financials.netIncome||0)>0},
+  {name:'Step 4: FOIR within acceptable range',fn:()=>{const n=state.financials.netIncome||1;const e=(state.financials.existingEMI||0)+calcEMI(state.loanAmount,INTEREST_RATES[state.loanType],state.loanTenure);return(e/n)<0.65;}},
+  {name:'Step 5: At least 1 document uploaded',fn:()=>state.documents.length>0},
+  {name:'Step 5: No oversized documents',fn:()=>state.documents.every(d=>d.status!=='error')},
+  {name:'Step 6: At least 1 reference added',fn:()=>state.references.length>0&&(state.references[0].name||'').length>1},
+  {name:'Step 7: Signature captured',fn:()=>!!state.signature},
+  {name:'Step 7: Legal consent checked',fn:()=>state.sigConsent===true},
+  {name:'Cross-step: Name matches PAN record',fn:()=>!state.kyc.panVerified||(state.kyc.panName||'').includes((state.personalInfo.lastName||'').toUpperCase())},
+  {name:'Cross-step: Loan amount eligible for employment type',fn:()=>{if(state.personalInfo.employmentType==='student')return state.loanAmount<=500000;return true;}},
+];
+
+function runTests(){
+  const out=document.getElementById('testOutput');
+  if(!out)return;
+  let html='';let pass=0,fail=0;
+  TESTS.forEach(t=>{
+    let result,err='';
+    try{result=t.fn();}catch(e){result=false;err=e.message;}
+    const ok=result===true;
+    if(ok)pass++;else fail++;
+    html+=`<div class="test-line"><span class="${ok?'test-pass':'test-fail'}">${ok?'✓':'✗'}</span><span style="color:${ok?'#a0a0c0':'#f87171'}">${t.name}</span>${err?`<span style="color:#6060a0;font-size:10px">(${err})</span>`:''}</div>`;
+  });
+  const total=TESTS.length;
+  html=`<div class="test-line" style="margin-bottom:6px;border-bottom:1px solid #2d2d44;padding-bottom:6px"><span style="color:#a0a0c0">Results: </span><span class="test-pass">${pass} passed</span><span style="color:#6060a0"> / </span><span class="test-fail">${fail} failed</span><span style="color:#6060a0"> / ${total} total</span></div>`+html;
+  out.innerHTML=html;
+}
+
+// NAVIGATION
+function goToStep(i){
+  if(i>state.currentStep&&!validateCurrentStep())return;
+  if(i<state.currentStep){state.currentStep=i;buildStepper();renderStep();}
+  else if(i===state.currentStep+1){nextStep();}
+}
+
+function validateCurrentStep(){
+  const id=STEPS[state.currentStep].id;
+  if(id==='loan-type'&&!state.loanType){alert('Please select a loan type to proceed');return false;}
+  if(id==='personal-info'){
+    if(!(state.personalInfo.firstName||'').trim()||(state.personalInfo.firstName||'').length<2){alert('Please enter your first name (min 2 characters)');return false;}
+    if(!(state.personalInfo.emailAddr||'').trim()||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.personalInfo.emailAddr)){alert('Please enter a valid email address');return false;}
+    if(!/^[6-9][0-9]{9}$/.test(state.personalInfo.mobileNum||'')){alert('Please enter a valid 10-digit mobile number');return false;}
+  }
+  if(id==='kyc'){
+    if(!state.kyc.panVerified){alert('Please verify your PAN number');return false;}
+    if(!state.kyc.cibilConsent){alert('Please provide consent for credit bureau check');return false;}
+  }
+  if(id==='signature'){
+    if(!state.sigConsent){alert('Please read and check the declaration to proceed');return false;}
+  }
+  return true;
+}
+
+function nextStep(){
+  if(!validateCurrentStep())return;
+  if(state.currentStep===STEPS.length-1){submitApplication();return;}
+  state.currentStep=Math.min(state.currentStep+1,STEPS.length-1);
+  buildStepper();renderStep();window.scrollTo&&window.scrollTo(0,0);
+}
+
+function prevStep(){
+  state.currentStep=Math.max(state.currentStep-1,0);
+  buildStepper();renderStep();
+}
+
+function submitApplication(){
+  if(!confirm('Submit your loan application?\n\nApplication ID: '+state.appId+'\nLoan Amount: '+formatINR(state.loanAmount)))return;
+  document.getElementById('formBody').innerHTML=`<div style="text-align:center;padding:3rem 2rem">
+    <div style="font-size:56px;margin-bottom:1rem">🎉</div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:24px;color:var(--ink);margin-bottom:8px">Application Submitted!</h2>
+    <p style="color:var(--ink3);margin-bottom:1.5rem">Your loan application has been received and is under review.</p>
+    <div class="approval-badge" style="max-width:400px;margin:0 auto">
+      <div style="font-size:13px;margin-bottom:4px">Application Reference Number</div>
+      <div style="font-size:20px;font-weight:700">${state.appId}</div>
+      <div style="font-size:12px;opacity:0.8;margin-top:4px">Expected processing: 2-4 business days</div>
+    </div>
+    <div style="margin-top:1.5rem;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+      <button class="btn-sm primary" onclick="window.print&&window.print()">🖨 Print Summary</button>
+      <button class="btn-sm" onclick="location.reload()">Start New Application</button>
+    </div>
+  </div>`;
+  document.getElementById('btnNext').style.display='none';
+  document.getElementById('btnBack').style.display='none';
+}
+
+function autoSave(){
+  state.savedAt=new Date();
+  const s=document.getElementById('saveStatus');
+  if(s)s.textContent='Saving...';
+  clearTimeout(window._saveTimeout);
+  window._saveTimeout=setTimeout(()=>{if(s)s.textContent='Saved '+state.savedAt.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})},600);
+}
+
+// INIT
+buildStepper();
+renderStep();
+</script>
